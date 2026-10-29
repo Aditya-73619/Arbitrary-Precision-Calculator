@@ -24,8 +24,8 @@ int main(int argc, char * argv[])
         return e_failure;
     }
 
-    print_list(num1.head);
-    print_list(num2.head);
+    // print_list(num1.head);
+    // print_list(num2.head);
 
     if(perform_operation(&num1,&num2,&result,argv[2]) == e_success){
         print_list(result.head);

@@ -10,6 +10,7 @@
 #define NOSWAP 0
 #define NEGATIVE -1
 #define POSITIVE 2
+#define LASTDIGIT 3
 
 typedef enum{
     e_success,
@@ -51,13 +52,20 @@ STATUS addition(Dlist* num1, Dlist* num2, Dlist* result);
 /* Substraction operation */
 STATUS subtraction(Dlist* num1, Dlist* num2, Dlist* result);
 
+/* Compare 2 numbers to tell which one is greater */
 int list_compare(Dlist* num1,Dlist* num2);
 
 /* Multiplication operation */
-// STATUS multiplication(Dlist* num1, Dlist* num2, Dlist* result);
+STATUS multiplication(Dlist* num1, Dlist* num2, Dlist* result);
+
+/* Removes leading zeroes of number */
+void remove_leading_zeroes(Dlist* list);
+
+/* Delete all nodes of the list */
+void clear_list(Dlist* list);
 
 /* Division operation */
-// STATUS division(Dlist* num1, Dlist* num2, Dlist* result);
+STATUS division(Dlist* num1, Dlist* num2, Dlist* result);
 
 
 

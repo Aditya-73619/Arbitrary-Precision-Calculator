@@ -10,7 +10,7 @@
 #define NOSWAP 0
 #define NEGATIVE -1
 #define POSITIVE 2
-#define LASTDIGIT 3
+
 
 typedef enum{
     e_success,

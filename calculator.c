@@ -1,10 +1,33 @@
 #include "calculator.h"
 
 int sign = POSITIVE;
+int sign1 = POSITIVE;
+int sign2 = POSITIVE;
+
+int operand_count = 0;
 
 STATUS create_list(Dlist* list, char* str)
 {
     int i=0;
+    int num_sign = POSITIVE;
+
+    // checking '+' or '-' as 1st character
+    if(*str == '+')
+        i++;
+    else if(*str == '-'){
+        num_sign = NEGATIVE;
+        i++;
+    }
+
+    // assigning sign to specific operand
+    if(operand_count == 0)
+        sign1 = num_sign;
+    else
+        sign2 = num_sign;
+
+
+    operand_count++;
+
 
     while(str[i] != '\0')
     {
@@ -107,20 +130,67 @@ STATUS perform_operation(Dlist* num1, Dlist* num2, Dlist* result, char* operator
 {
     switch(operator[0])
     {
-        case '+': return addition(num1,num2,result);
+        case '+':   if(sign1 == sign2){
+                        sign = sign1;
+                        return addition(num1,num2,result);
+                    }
+                    else if(sign1 != sign2){
+                        // num1 > num2
+                        if(list_compare(num1,num2) == NOSWAP){
+                            sign = sign1;
+                            return subtraction(num1,num2,result);
+                        }
+                        // num2 > num1
+                        else{
+                            sign = sign2;
+                            return subtraction(num2,num1,result);
+                        }
+                    }
 
-        case '-':   if(list_compare(num1,num2) == NOSWAP){
-                        sign = POSITIVE;
-                        return subtraction(num1,num2,result);
-                    }
-                    else{
-                        sign = NEGATIVE;
-                        return subtraction(num2,num1,result);
-                    }
         
-        case 'x': return multiplication(num1,num2,result);
 
-        case '/': return division(num1,num2,result);
+        case '-':   if(sign1 != sign2){
+                        sign = sign1;
+                        return addition(num1,num2,result);
+                    }
+                    // Both operand have same sign
+                    else{
+                        // num1 > num2 
+                        if(list_compare(num1,num2) == NOSWAP){
+                            sign = sign1;
+                            return subtraction(num1,num2,result);
+                        }
+                        // num2 > num1
+                        else{
+                            sign = (sign1 == NEGATIVE) ? POSITIVE : NEGATIVE;
+                            return subtraction(num2,num1,result);
+                        }
+                    }
+                    
+                    
+        
+        case 'x':   sign = (sign1 != sign2) ? NEGATIVE : POSITIVE;
+
+                    // is num1 or num is 0 then sign = POSITIVE
+                    if(num1->head->data == 0 && num1->head==num1->tail ||
+                       num2->head->data == 0 && num2->head==num2->tail)
+                    {
+                        sign = POSITIVE;
+                    }
+
+                    return multiplication(num1,num2,result);
+
+
+        case '/':   if(division(num1,num2,result) == e_failure)
+                        return e_failure;
+
+                    sign = (sign1 != sign2) ? NEGATIVE : POSITIVE;
+
+                    if(result->head->data == 0 && result->head == result->tail)
+                        sign = POSITIVE;
+
+                    return e_success;
+                    
 
         default : printf("Error: Invalid operator\n");
                   return e_failure;
@@ -194,7 +264,6 @@ STATUS subtraction(Dlist* num1, Dlist* num2, Dlist* result)
 
     int borrow = 0;
     int diff = 0;
-    int digit;
 
     while(temp1 || temp2)
     {
@@ -401,6 +470,9 @@ STATUS multiplication(Dlist* num1, Dlist* num2, Dlist* result)
     result1.head = NULL;
     result1.tail = NULL;
 
+    // remove leadin zeroes from result
+    remove_leading_zeroes(result);
+
     return e_success;
 }
 
@@ -506,6 +578,6 @@ STATUS division(Dlist* num1, Dlist* num2, Dlist* result)
     clear_list(&current);
     clear_list(&sub_result);
 
-    sign = POSITIVE;
+    // sign = POSITIVE;
     return e_success;
 }
